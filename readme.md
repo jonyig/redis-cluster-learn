@@ -16,7 +16,7 @@ $ docker-compose up -d
 
 ### check cluster info
 
-```json
+```json 
 
 $ docker exec -it rediscluster_redis-node-0_1 bash
 /$ redis-cli -a bitnami
