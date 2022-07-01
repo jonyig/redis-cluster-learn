@@ -9,14 +9,14 @@ manual folder is made by jonny
 
 [https://hub.docker.com/r/bitnami/redis-cluster/](https://hub.docker.com/r/bitnami/redis-cluster/)
 
-```json
+```shell
 $ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-redis-cluster/master/docker-compose.yml > docker-compose.yml
 $ docker-compose up -d
 ```
 
 ### check cluster info
 
-```json 
+```shell 
 
 $ docker exec -it rediscluster_redis-node-0_1 bash
 /$ redis-cli -a bitnami
@@ -26,19 +26,19 @@ $ docker exec -it rediscluster_redis-node-0_1 bash
 
 ### check master-slave info
 
-```json
+```shell
 /$ redis-cli --cluster check 127.0.0.1:6379 -a bitnami
 ```
 
 ### Docker container network
 
-```json
+```shell
 $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
 ```
 
 ### Set & Get
 
-```json
+```shell
 redis-cli -h 172.22.0.2 -a bitnami -c
 get K1
 set K1 123
@@ -51,7 +51,7 @@ set K1 123
 3. assign slots to new master
 4. connect slave with master
 
-```json
+```shell
 //!! need to check redis type in the cluster
 docker run -d --name {name} --network {network} --privileged=true  -p 8106:6379 redis:{type} --cluster-enabled yes --appendonly yes  --requirepass "bitnami" --masterauth "bitnami"
 
@@ -71,7 +71,7 @@ redis-cli --cluster add-node {new-slave-redis IP} {cluster-redis IP}  --cluster-
 
 ### balance slot
 
-```json
+```shell
 redis-cli --cluster rebalance 172.19.0.8:6379 -a bitnami
 ```
 
@@ -81,7 +81,7 @@ redis-cli --cluster rebalance 172.19.0.8:6379 -a bitnami
 2. be empty for master node
 3. delete master node
 
-```json
+```shell
 //delete slave
 redis-cli --cluster del-node {node Redis IP} {node Redis ID} -a bitnami
 
