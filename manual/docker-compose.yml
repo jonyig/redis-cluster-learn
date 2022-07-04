@@ -6,7 +6,6 @@ services:
     restart: always
     entrypoint: [redis-server, /etc/redis/redis-cluster.conf]
     volumes:
-#      - ./data/node1:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
 
   redis-node2:
@@ -14,7 +13,6 @@ services:
     restart: always
     entrypoint: [redis-server, /etc/redis/redis-cluster.conf]
     volumes:
-#      - ./data/node2:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
 
   redis-node3:
@@ -22,7 +20,6 @@ services:
     restart: always
     entrypoint: [redis-server, /etc/redis/redis-cluster.conf]
     volumes:
-#      - ./data/node3:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
 
   redis-node4:
@@ -30,7 +27,6 @@ services:
     restart: always
     entrypoint: [redis-server, /etc/redis/redis-cluster.conf]
     volumes:
-#      - ./data/node4:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
 
   redis-node5:
@@ -38,7 +34,6 @@ services:
     restart: always
     entrypoint: [redis-server, /etc/redis/redis-cluster.conf]
     volumes:
-#      - ./data/node5:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
 
   redis-node6:
@@ -47,5 +42,4 @@ services:
     entrypoint: [/bin/sh,-c,'echo "yes" | redis-cli -a jo123 --cluster create manual_redis-node2_1:6379 manual_redis-node1_1:6379 manual_redis-node3_1:6379 manual_redis-node4_1:6379 manual_redis-node5_1:6379 manual_redis-node6_1:6379 --cluster-replicas 1 | redis-server /etc/redis/redis-cluster.conf']
 
     volumes:
-#      - ./data/node6:/data
       - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
