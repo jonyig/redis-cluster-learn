@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  redis-node1:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
+
+  redis-node2:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
+
+  redis-node3:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
+
+  redis-node4:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
+
+  redis-node5:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
+
+  redis-node6:
+    image: redis:7.0
+    restart: always
+    command: redis-server /etc/redis/redis-cluster.conf
+    volumes:
+      - ./data/node1:/data
+      - ./redis-cluster.conf:/etc/redis/redis-cluster.conf
