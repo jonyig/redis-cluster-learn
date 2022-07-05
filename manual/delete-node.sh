@@ -18,6 +18,9 @@ docker exec -it manual_redis-node1_1 redis-cli --cluster reshard redis-new-maste
 # delete master node
 docker exec -t manual_redis-node1_1 redis-cli --cluster del-node redis-new-master01:6379 $deleteMasterNode -a $requirepass
 
+# balance
+docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
+
 # remove container
 docker rm -f redis-new-slave01
 docker rm -f redis-new-master01

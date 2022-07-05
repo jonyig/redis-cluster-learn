@@ -18,6 +18,11 @@ docker exec -it manual_redis-node1_1 redis-cli --cluster add-node redis-new-mast
 # get new master node id
 newMasterNode=$(docker exec -t manual_redis-node1_1 redis-cli -h redis-new-master01 -p 6379 -a $requirepass cluster nodes | grep myself | cut -d' ' -f1)
 
-# reshard slots to new master
-docker exec -it manual_redis-node1_1 redis-cli --cluster reshard redis-new-master01:6379 --cluster-from $firstMasterNode --cluster-to $newMasterNode --cluster-slots 1 --cluster-yes  -a $requirepass
+# wait for cluster sync
+sleep 3
 
+# reshard slots to new master
+docker exec -it manual_redis-node1_1 redis-cli --cluster reshard manual_redis-node1_1:6379 --cluster-from $firstMasterNode --cluster-to $newMasterNode --cluster-slots 1 --cluster-yes  -a $requirepass
+
+# balance
+docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
