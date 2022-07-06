@@ -2,6 +2,12 @@
 # get requirepass from redis-cluster
 requirepass=$(cat redis-cluster.conf | grep requirepass | cut -d' ' -f2)
 
+# get slave node id
+deleteSlaveNode=$(docker exec -t manual_redis-node1_1 redis-cli -h redis-new-slave01 -p 6379 -a $requirepass cluster nodes | grep myself | cut -d' ' -f1)
+
+# delete slave node
+docker exec -t manual_redis-node1_1 redis-cli --cluster del-node redis-new-slave01:6379 $deleteSlaveNode -a $requirepass
+
 # get master node id
 masterNode=$(docker exec -t manual_redis-node1_1 redis-cli -h redis-new-master01 -p 6379 -a $requirepass cluster nodes | grep -v myself | grep master | head -1 | cut -d' ' -f1)
 
@@ -19,7 +25,7 @@ docker exec -it manual_redis-node1_1 redis-cli --cluster reshard redis-new-maste
 docker exec -t manual_redis-node1_1 redis-cli --cluster del-node redis-new-master01:6379 $deleteMasterNode -a $requirepass
 
 # balance
-docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
+#docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
 
 # remove container
 docker rm -f redis-new-slave01

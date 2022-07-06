@@ -25,4 +25,7 @@ sleep 3
 docker exec -it manual_redis-node1_1 redis-cli --cluster reshard manual_redis-node1_1:6379 --cluster-from $firstMasterNode --cluster-to $newMasterNode --cluster-slots 1 --cluster-yes  -a $requirepass
 
 # balance
-docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
+#docker exec -it manual_redis-node1_1 redis-cli --cluster rebalance manual_redis-node1_1:6379 -a $requirepass
+
+# add slave node
+docker exec -t manual_redis-node1_1 redis-cli --cluster add-node redis-new-slave01:6379 manual_redis-node1_1:6379  --cluster-slave -a $requirepass
