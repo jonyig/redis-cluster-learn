@@ -7,7 +7,7 @@ There are two shells for adding and deleting nodes
 
 ## Command
 
-***You need to create redis-cluster by docker-compose.yaml before you run these shells***
+***You need to create redis-cluster by [docker-compose.yaml](docker-compose.yml) before you run these shells***
 ### add the 
 ```shell
 redis-cluster/manual $ sh add-node.sh 
