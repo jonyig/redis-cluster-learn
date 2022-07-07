@@ -1,47 +1,45 @@
-### Description
+## ***if you have generated once and you need to regenerate, you need to rm local volumes***
 
-the file downloaded from docker hub, it is example
-
-manual folder is made by jonny
-
+```bash
+docker volumes ls
+docker volumes rm {volumes id}
+```
 
 ### Create a cluster
 
 [https://hub.docker.com/r/bitnami/redis-cluster/](https://hub.docker.com/r/bitnami/redis-cluster/)
 
-```shell
+```bash
 $ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-redis-cluster/master/docker-compose.yml > docker-compose.yml
 $ docker-compose up -d
 ```
 
 ### check cluster info
 
-```shell 
-
-$ docker exec -it rediscluster_redis-node-0_1 bash
-/$ redis-cli -a bitnami
-
-127.0.0.1:6379> CLUSTER INFO
+```bash
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli  -a bitnami cluster info
 ```
 
 ### check master-slave info
 
-```shell
-/$ redis-cli --cluster check 127.0.0.1:6379 -a bitnami
+```bash
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster check redis-cluster_redis-node-3_1:6379 -a bitnami
 ```
 
 ### Docker container network
 
-```shell
+```bash
 $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q)
 ```
 
 ### Set & Get
 
-```shell
-redis-cli -h 172.22.0.2 -a bitnami -c
-get K1
-set K1 123
+```bash
+// get 
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli -h redis-cluster_redis-node-3_1  -a bitnami -c get k2
+
+// set
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli -h redis-cluster_redis-node-3_1  -a bitnami -c set k2 123
 ```
 
 ### extend node
@@ -51,28 +49,26 @@ set K1 123
 3. assign slots to new master
 4. connect slave with master
 
-```shell
+```bash
 //!! need to check redis type in the cluster
-docker run -d --name {name} --network {network} --privileged=true  -p 8106:6379 redis:{type} --cluster-enabled yes --appendonly yes  --requirepass "bitnami" --masterauth "bitnami"
-
 docker run -d --name redis-new-master01 --network redis-cluster_default --privileged=true  -p 8106:6379 redis:7.0 --cluster-enabled yes --appendonly yes  --requirepass "bitnami" --masterauth "bitnami"
 
 docker run -d --name redis-new-slave01 --network redis-cluster_default --privileged=true  -p 8107:6379 redis:7.0 --cluster-enabled yes --appendonly yes  --requirepass "bitnami" --masterauth "bitnami"
 
 // check redis-new-master01 network
-redis-cli --cluster add-node  172.19.0.8:6379 172.19.0.2:6379 -a bitnami
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster add-node  redis-new-master01:6379 redis-cluster_redis-node-5_1:6379 -a bitnami
 
 // assign slots
-redis-cli --cluster reshard 172.19.0.8:6379 -a bitnami
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster reshard redis-new-master01:6379 -a bitnami
 
 // connect slave with master
-redis-cli --cluster add-node {new-slave-redis IP} {cluster-redis IP}  --cluster-slave --cluster-master-id 新節點master-id -a bitnami
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster add-node redis-new-slave01:6379 redis-cluster_redis-node-5_1:6379 --cluster-slave --cluster-master-id {master node id} -a bitnami
 ```
 
 ### balance slot
 
-```shell
-redis-cli --cluster rebalance 172.19.0.8:6379 -a bitnami
+```bash
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster rebalance redis-cluster_redis-node-5_1:6379 -a bitnami
 ```
 
 ### reduce cluster node
@@ -81,20 +77,20 @@ redis-cli --cluster rebalance 172.19.0.8:6379 -a bitnami
 2. be empty for master node
 3. delete master node
 
-```shell
+```bash
 //delete slave
-redis-cli --cluster del-node {node Redis IP} {node Redis ID} -a bitnami
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster del-node redis-new-slave01:6379 {slave node ID} -a bitnami
 
 //move slots 
-redis-cli --cluster reshard 172.19.0.8:6379 \
---cluster-from {node ID} \
---cluster-to  {node ID} \
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster reshard redis-new-master01:6379 \
+--cluster-from {master node ID} \
+--cluster-to  {other node ID} \
 --cluster-slots {total slots} \
 --cluster-yes \
 -a bitnami
 
 //delete master
-redis-cli --cluster del-node 172.19.0.2:6379 2160750c35f1023879828c17c7d146f5933c3319 -a bitnami
+$ docker exec -it redis-cluster_redis-node-5_1 redis-cli --cluster del-node redis-new-slave01:6379 {delete master node id} -a bitnami
 ```
 
 ## Related
