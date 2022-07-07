@@ -1,5 +1,6 @@
 ## ***if you have generated once and you need to regenerate, you need to rm local volumes***
 
+## ***yuo can also get my manual [docker-compoase.yaml](manual/readme.md)***##
 ```bash
 docker volumes ls
 docker volumes rm {volumes id}
